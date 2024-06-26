@@ -4,10 +4,14 @@
     Author     : Admin
 --%>
 
-<%@page import="baonhq.registration.RegistrationDTO"%>
+
+<%-- <%@page import="baonhq.registration.RegistrationDTO"%>
 <%@page import="java.util.List"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page session="false"%>
+<%@ page session="false"%> --%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -16,7 +20,56 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <% 
+        
+        <font color="red">
+        Welcome ${sessionScope.USER.fullname}
+        </font>
+        
+        <form action="DispatchServlet">
+            Search Value <input type="text" name="txtSearch" value="${param.txtSearch}" />
+            <input type="submit" value="Search" name="btAction" />
+        </form><br>
+        
+        <c:set var="searchValue" value="${param.txtSearch}" />
+        
+        <c:if test="${not empty searchValue}" >
+              <c:set var="result" value="${requestScope.SEARCH_RESULT}" />
+                     <c:if test="${not empty result }" >
+                         <table border="1">
+                             <thead>
+                                 <tr>
+                                     <th>No</th>
+                                     <th>Username</th>
+                                     <th>Password</th>
+                                     <th>LastName</th>
+                                     <th>Role</th>
+                                 </tr>
+                             </thead>
+                             <tbody>
+                                 <c:forEach var="dto" items="${result}" varStatus="counter">
+                                     <tr>
+                                     <td>${counter.count}</td>
+                                     <td>${dto.username}</td>
+                                     <td>${dto.password}</td>
+                                     <td>${dto.fullname}</td>
+                                     <td>${dto.isAdmin}</td>
+                                 </tr>
+                                 </c:forEach>
+                             </tbody>
+                         </table>
+
+                     </c:if>
+                     <c:if test="${empty result }" >
+                           <h2>Not Found
+                     </c:if>
+        </c:if>
+        
+        
+        
+        
+        
+        
+       <%-- <% 
             // if exitsted cookies => login 
             //1. get all Cookies
             Cookie [] cookies = request.getCookies();
@@ -120,6 +173,7 @@
                      }
                  }
                  
-            %>
+            %> --%>
+       
     </body>
 </html>

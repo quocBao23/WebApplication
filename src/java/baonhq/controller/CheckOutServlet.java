@@ -64,9 +64,9 @@ public class CheckOutServlet extends HttpServlet {
                         // insert into tbl.Orders
                         OrderDAO orderdao = new OrderDAO();
                         boolean resultOrder = orderdao.insertCustomerInform(customerName, customerAddress, customerEmail, total);
-                        if (resultOrder){
-                          session.removeAttribute("CART");
-                        }
+//                        if (resultOrder){
+//                          session.removeAttribute("CART");
+//                        }
 //                        // insert into tbl.OrderDetail
                        
                         for (String key : items.keySet()) {
@@ -82,8 +82,9 @@ public class CheckOutServlet extends HttpServlet {
                             float totalProduct = unitPrice * quantity;
                             OrderDetailDAO oddao = new OrderDetailDAO();
                             boolean result = oddao.insertOrderDetail(productID, unitPrice, quantity, orderID, totalProduct); 
-                            System.out.println(oddao.getCount());
+                            
                         }
+                        session.removeAttribute("CART");
                         
                         
                         
