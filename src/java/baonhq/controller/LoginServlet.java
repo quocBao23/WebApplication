@@ -7,19 +7,12 @@ package baonhq.controller;
 
 import baonhq.registration.RegistrationDAO;
 import baonhq.registration.RegistrationDTO;
-import baonhq.util.DBHelper;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
-import javax.servlet.Registration;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -34,7 +27,7 @@ public class LoginServlet extends HttpServlet {
     // khai bao bien hang
 //    private final String SEARCH_PAGE = "search.html";
     private final String SEARCH_PAGE = "search.jsp";
-    private final String INVALID_PAGE = "invalid.html";
+    private final String ERROR_PAGE = "error.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -49,7 +42,7 @@ public class LoginServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
-        String url = INVALID_PAGE;
+        String url = ERROR_PAGE;
 
         try {
 
@@ -76,10 +69,10 @@ public class LoginServlet extends HttpServlet {
             }
             // end user click 
 
-        } catch (NamingException ex) {
-            ex.printStackTrace();
+        } catch (NamingException ex) {            
+            log("LoginServlet_Naming " + ex.getMessage());
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log("LoginServlet_SQL " + ex.getMessage());
         } finally {
 //            response.sendRedirect(url);
             RequestDispatcher rd = request.getRequestDispatcher(url);

@@ -67,22 +67,13 @@ public class OrderDAO implements Serializable {
          return count;  
     }
     
-    public boolean insertCustomerInform(String customerName, String customerAddress, String customerEmail, float total) throws SQLException, NamingException{
+    public boolean insertCustomerInform(OrderDTO dto) throws SQLException, NamingException{
         
         Connection con = null;
         PreparedStatement stm = null;
         boolean result = false;
         
-        
-        if (count >=0 && count < 10 ){
-            orderID = "ODOO".concat(String.valueOf(count +1));
-        }else if (count >= 10 && count < 100 ){
-            orderID = "ODO".concat(String.valueOf(count +1));
-        }else {
-            orderID = "OD".concat(String.valueOf(count +1));
-        }
-        Date date = new Date(System.currentTimeMillis());
-        
+
         try {
         //1.Connect DB          b11 connect
             con = DBHelper.getConnection();
@@ -92,12 +83,12 @@ public class OrderDAO implements Serializable {
                     
         //3. Create Statement Obj
             stm = con.prepareStatement(sql);
-            stm.setString(1, orderID);
-            stm.setDate(2, date);
-            stm.setString(3, customerName);
-            stm.setString(4, customerAddress);
-            stm.setString(5, customerEmail);
-            stm.setFloat(6, total);
+            stm.setString(1, dto.getOrderID());
+            stm.setTimestamp(2, dto.getDate());
+            stm.setString(3, dto.getCustomer());
+            stm.setString(4, dto.getAddress());
+            stm.setString(5, dto.getEmail());
+            stm.setFloat(6, dto.getTotal());
         //4. Execute querry
             int i = stm.executeUpdate();
         //5. Process result     b13 mapped

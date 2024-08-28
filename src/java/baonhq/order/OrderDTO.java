@@ -7,6 +7,7 @@ package baonhq.order;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  *
@@ -14,7 +15,7 @@ import java.sql.Date;
  */
 public class OrderDTO implements Serializable{
     private String orderID;
-    private Date date;
+    private Timestamp date;
     private String customer;
     private String address;
     private String email;
@@ -23,7 +24,7 @@ public class OrderDTO implements Serializable{
     public OrderDTO() {
     }
 
-    public OrderDTO(String orderID, Date date, String customer, String address, String email, float total) {
+    public OrderDTO(String orderID, Timestamp date, String customer, String address, String email, float total) {
         this.orderID = orderID;
         this.date = date;
         this.customer = customer;
@@ -40,11 +41,11 @@ public class OrderDTO implements Serializable{
         this.orderID = orderID;
     }
 
-    public Date getDate() {
+    public Timestamp getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Timestamp date) {
         this.date = date;
     }
 

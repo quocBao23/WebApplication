@@ -3,14 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/registration/RegistrationDTO.java</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/DispatchServlet.java</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/LoginServlet.java</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/registration/RegistrationDAO.java</file>
             <file>file:/D:/Sem4/PRJ301/WebApplication/web/search.jsp</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/UpdateServlet.java</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/SearchLastNameServlet.java</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/web/search.html</file>
-            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/StartUpServlet.java</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/util/DBHelper.java</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/web/WEB-INF/web.xml</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/CreateAccountServlet.java</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/web/META-INF/context.xml</file>
+            <file>file:/D:/Sem4/PRJ301/WebApplication/src/java/baonhq/controller/DeleteAccountServlet.java</file>
         </group>
     </open-files>
 </project-private>

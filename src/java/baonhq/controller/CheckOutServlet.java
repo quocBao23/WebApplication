@@ -7,16 +7,12 @@ package baonhq.controller;
 
 import baonhq.cart.CartBean;
 import baonhq.order.OrderDAO;
-import baonhq.orderDetail.OrderDetailDAO;
-import baonhq.product.ProductDAO;
-import baonhq.product.ProductDTO;
+import baonhq.order.OrderDTO;
+import baonhq.order.OrderInformError;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.sql.Timestamp;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -32,7 +28,11 @@ import javax.servlet.http.HttpSession;
  */
 @WebServlet(name = "CheckOutServlet", urlPatterns = {"/CheckOutServlet"})
 public class CheckOutServlet extends HttpServlet {
-    private final String MARKET_PLACE = "ShowProductServlet";
+
+    //private final String MARKET_PLACE = "ShowProductServlet";
+    private final String CHECK_OUT_ERROR = "viewcarterror.jsp";
+    private final String CHECK_OUT_ITEM = "CheckOutItemServlet";
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -46,59 +46,72 @@ public class CheckOutServlet extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         // 1. get all information
-            String customerName = request.getParameter("customerName");
-            String customerAddress = request.getParameter("customerAddress");
-            String customerEmail = request.getParameter("customerEmail");
-            float total =0;
-            
-            String url = MARKET_PLACE;
+        String customerName = request.getParameter("customerName");
+        String customerAddress = request.getParameter("customerAddress");
+        String customerEmail = request.getParameter("customerEmail");
+        
+        float totalPayment = 0;
+        
+         Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        
+        // Create a Error Obj
+        OrderInformError error = new OrderInformError();
+        boolean found = false;
+        String url = CHECK_OUT_ERROR;
+
         try {
-            //
+            //Customer goes to the cart place
             HttpSession session = request.getSession(false);
-            if (session != null){
-                CartBean cart = (CartBean)session.getAttribute("CART");
-                if (cart != null){
+            if (session != null) {
+                //Customer takes cart
+                CartBean cart = (CartBean) session.getAttribute("CART");
+                if (cart != null) {
+                    //Customer takes items
                     Map<String, Integer> items = cart.getItems();
-                    if (items != null){
-                        total = cart.totalPayment(cart);
-                        // insert into tbl.Orders
-                        OrderDAO orderdao = new OrderDAO();
-                        boolean resultOrder = orderdao.insertCustomerInform(customerName, customerAddress, customerEmail, total);
-//                        if (resultOrder){
-//                          session.removeAttribute("CART");
-//                        }
-//                        // insert into tbl.OrderDetail
-                       
-                        for (String key : items.keySet()) {
-                            // get information
-                            ProductDAO productdao = new ProductDAO();
-                            ProductDTO dto = null;
-                            dto = productdao.getProduct(key);
-                            
-                            int productID = dto.getSku();
-                            float unitPrice = dto.getPrice();
-                            int quantity = items.get(key);
-                            String orderID = orderdao.getOrderID();
-                            float totalProduct = unitPrice * quantity;
-                            OrderDetailDAO oddao = new OrderDetailDAO();
-                            boolean result = oddao.insertOrderDetail(productID, unitPrice, quantity, orderID, totalProduct); 
-                            
+                    if (items != null) {
+                        
+                        // Catch user error
+                        if (customerName.trim().isEmpty()) {
+                            found = true;
+                            error.setUserNameError("Name cannot be blank");
                         }
-                        session.removeAttribute("CART");
-                        
-                        
-                        
-                        
+                        if (customerAddress.trim().isEmpty()) {
+                            found = true;
+                            error.setUserAddressError("Address cannot be blank");
+                        }
+                        if (!customerEmail.trim().isEmpty() && !customerEmail.contains("@gmail.com")) {
+                            found = true;
+                            error.setUserEmailFormatError("Email should be include @gmail.com");
+                        }
+                        if (found) {
+                            // Set error vao 1 attribue
+                            request.setAttribute("USER_INFORM_ERROR", error);
+                        } else {   // Insert 
+                            //2.1 New DAO object
+                            OrderDAO orderdao = new OrderDAO();
+                            int count = orderdao.checkOrderRow();
+                            String orderID = String.format("OD%03d", ++count);
+                            totalPayment = cart.getTotal();
+                            OrderDTO dto = new OrderDTO(orderID, currentTime, customerName, customerAddress, customerEmail, totalPayment);
+                            request.setAttribute("ORDER", dto);
+                            //2.2 Call method
+                            boolean result = orderdao.insertCustomerInform(dto);
+                            if (result) {
+                                url = CHECK_OUT_ITEM;
+                            }
+                        }
+
                     }
                 }
             }
         } catch (SQLException ex) {
-            ex.printStackTrace();
+            log("CheckOutServlet_SQL " + ex.getMessage());
         } catch (NamingException ex) {
-            ex.printStackTrace();
-        }finally{
-            response.sendRedirect(url);
-            
+            log("CheckOutServlet_Naming " + ex.getMessage());
+        } finally {
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
+
         }
     }
 

@@ -11,6 +11,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.naming.NamingException;
 
 /**
@@ -19,10 +20,16 @@ import javax.naming.NamingException;
  */
 public class CartBean implements Serializable{
     private Map<String, Integer> items;
+    private float total;
 
+    public float getTotal() throws SQLException, NamingException {
+        return totalPayment();
+    }
+    
     public Map<String, Integer> getItems() {
         return items;
     }
+    
 
     public void addItemToCart(String item, int quantity){
         if ( item == null){
@@ -67,16 +74,19 @@ public class CartBean implements Serializable{
         
     }
 
-    public float totalPayment(CartBean cart) throws SQLException, NamingException{
+    public float totalPayment() throws SQLException, NamingException{
         float total = 0;
         //get each key
-        for (String key : cart.getItems().keySet()) {
-            ProductDTO dto = null;
-            ProductDAO dao = new ProductDAO();
+        for (String key : items.keySet()) {
+            if (key != null){
+                ProductDTO dto = null;
+                ProductDAO dao = new ProductDAO();
             //get dto
             dto = dao.getProduct(key);
             //total = price * quantity
-            total += dto.getPrice() * cart.getItems().get(key);
+            total += dto.getPrice() * items.get(key) ;
+            }
+            
         }
         return total ;
     }

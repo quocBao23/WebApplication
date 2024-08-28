@@ -7,7 +7,6 @@ package baonhq.controller;
 
 import baonhq.cart.CartBean;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -57,8 +56,7 @@ public class AddToCartServlet extends HttpServlet {
             // chọn lại đồ, thực chất là quay lại trang market
             
         } finally{
-            response.sendRedirect(url);
-            
+            response.sendRedirect(url);            
         }
             
     }

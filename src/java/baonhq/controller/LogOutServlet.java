@@ -5,10 +5,7 @@
  */
 package baonhq.controller;
 
-import baonhq.cart.CartBean;
 import java.io.IOException;
-
-import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,9 +17,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name = "RemoveItemServlet", urlPatterns = {"/RemoveItemServlet"})
-public class RemoveItemServlet extends HttpServlet {
-
+@WebServlet(name = "LogOutServlet", urlPatterns = {"/LogOutServlet"})
+public class LogOutServlet extends HttpServlet {
+    private final String LOGIN_PAGE = "login.html";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,39 +32,14 @@ public class RemoveItemServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try {
-            //1. goes to his/her cart place
+        String url = LOGIN_PAGE;
+        try  {
             HttpSession session = request.getSession(false);
-            if (session != null) {
-                //2. customer take his/ her cart
-                CartBean cart = (CartBean) session.getAttribute("CART");
-                if (cart != null) {
-                    //3. customer take items
-                    Map<String, Integer> items = cart.getItems();
-                    if (items != null) {
-                        //4. customer choose item
-                        String [] selectedItem = request.getParameterValues("chkItem");
-                        if ( selectedItem != null){
-                            // user check at least one item
-                            // neu khong check thi select khong ton tai
-                            for (String item : selectedItem) {
-                                 //5. customer drops item
-                                cart.removeItemFromCart(item);
-                            }
-                            session.setAttribute("CART", cart);
-                        }
-                       
-                    }
-
-                }
-
+            if (session != null){
+                session.invalidate();
             }
-
-        } finally {
-            // refresh by call previous using urlRewrting
-            String urlRewriting = "DispatchServlet"
-                    + "?btAction=View Cart";
-            response.sendRedirect(urlRewriting);
+        }finally{
+            response.sendRedirect(url);
         }
     }
 

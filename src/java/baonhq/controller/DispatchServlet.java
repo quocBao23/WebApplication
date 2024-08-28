@@ -6,7 +6,6 @@
 package baonhq.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 public class DispatchServlet extends HttpServlet {
     private final String LOGIN_PAGE = "login.html";
     private final String VIEW_CART_PAGE = "viewcart.jsp";
+    
     private final String LOGIN_CONTROLLER ="LoginServlet";
     private final String SEARCH_LASTNAME_CONTROLLER = "SearchLastNameServlet";
     private final String DELETE_ACCOUNT_CONTROLLER =  "DeleteAccountServlet";
@@ -30,6 +30,8 @@ public class DispatchServlet extends HttpServlet {
     private final String ADD_TO_CART_CONTROLLER = "AddToCartServlet";
     private final String REMOVE_ITEM_FROM_CART_CONTROLLER = "RemoveItemServlet";
     private final String CHECK_OUT_CONTROLLER = "CheckOutServlet";
+    private final String CREATE_ACCOUNT_CONTROLLER ="CreateAccountServlet";
+    private final String LOG_OUT_CONTROLLER ="LogOutServlet";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -67,6 +69,10 @@ public class DispatchServlet extends HttpServlet {
                 url = REMOVE_ITEM_FROM_CART_CONTROLLER;
             }else if (button.equals("Check Out")){
                 url = CHECK_OUT_CONTROLLER;
+            }else if (button.equals("Create Account")){
+                url = CREATE_ACCOUNT_CONTROLLER;
+            }else if (button.equals("Log Out")){
+                url = LOG_OUT_CONTROLLER;
             }
             
             

@@ -82,24 +82,27 @@
                     <form action="DispatchServlet">
                         <c:set var="errors" value="${requestScope.USER_INFORM_ERROR}" />
                         <br>
-                        CustomerName <input type="text" name="customerName" value=""/> <br>
+                        CustomerName <input type="text" name="customerName" value="${param.customerName}"/> <br>
                         <c:if test="${not empty errors.userNameError}" >
                             <font color ="red">
                             ${errors.userNameError}
                             </font> <br> 
                         </c:if>
-                        Address <textarea name="customerAddress" rows="2" cols="20"/></textarea> <br>
+                            
+                        Address <textarea name="customerAddress" rows="2" cols="20"/>${param.customerAddress}</textarea> <br>
                         <c:if test="${not empty errors.userAddressError}" >
                         <font color ="red">
                         ${errors.userAddressError}
                         </font> <br> 
                         </c:if>
-                    Email <input type="text" name="customerEmail" value="" placeholder="Optional"/> <br>
-                         <c:if test="${not empty errors.userEmailFormatError}" >
+                        
+                        Email <input type="text" name="customerEmail" value="${param.customerEmail}" placeholder="Optional"/> <br>
+                        <c:if test="${not empty errors.userEmailFormatError}" >
                         <font color ="red">
                         ${errors.userEmailFormatError}
                         </font> <br> 
                         </c:if>
+                        
                     <input type="submit" value="Check Out" name="btAction" />
                 </form>
             </c:if>
@@ -108,68 +111,6 @@
 
 
 
-    <%-- Old version     
-        <%
-            //1. Customer goes to his/her cart
-            if (session != null) {
-                //2. Customer take his/her cart
-                CartBean cart = (CartBean) session.getAttribute("CART");
-                if (cart != null) {
-                    //3. Customer take his/her items ( ngan chua )
-                    Map<String, Integer> items = cart.getItems();
-                    if (items != null) {
-                        //4. Show tat ca mon do
-                        %>
-                        <form action="DispatchServlet">
-                             <table border="1">
-                            <thead>
-                                <tr>
-                                    <th>No.</th>
-                                    <th>Name</th>
-                                    <th>Quantity</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <%
-                                    int count = 0;
-                                    for (String key : items.keySet()) {
-                                    %>
-                                    <tr>
-                                        <td> <%=++count%></td>
-                                         <td><%= key %></td>
-                                         <td><%=items.get(key)%></td>
-                                         <td>
-                                             <input type="checkbox" name="chkItem" value="<%= key %>" />
-                                         </td>
-                                    </tr>
-                                <%        
-                                        }
-                                %>
-                                <tr>
-                                    <td colspan="3">
-                                        <a href="ShowProductServlet">Add more book</a>
-                                    </td>
-                                    <td>
-                                        <input type="submit" value="Remove Selected Items" name="btAction" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                                
-                        </form>
-                        <%
-                    }
-                }
-            }
-        %>
-            <form action="DispatchServlet">
-                <br><br>
-                                CustomerName <input type="text" name="customerName" value="" /> <br>
-                                Address <textarea id="w3review" name="customerAddress" rows="2" cols="20"></textarea> <br>
-                                Email <input type="email" name="customerEmail" value=""  /> <br>
-                                <input type="submit" value="Check Out" name="btAction" />
-            </form>
-    --%>
+
 </body>
 </html>

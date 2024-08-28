@@ -7,12 +7,8 @@ package baonhq.controller;
 
 import baonhq.registration.RegistrationDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -59,9 +55,9 @@ public class UpdateServlet extends HttpServlet {
             }
             
         } catch (NamingException ex) {
-            Logger.getLogger(UpdateServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log("UpdateServlet_Naming " + ex.getMessage() );
         } catch (SQLException ex) {
-            Logger.getLogger(UpdateServlet.class.getName()).log(Level.SEVERE, null, ex);
+            log("UpdateServlet_SQL " + ex.getMessage());
         }finally{
             response.sendRedirect(url);
         }

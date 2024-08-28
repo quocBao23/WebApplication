@@ -7,7 +7,6 @@ package baonhq.controller;
 
 import baonhq.registration.RegistrationDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -55,10 +54,10 @@ public class DeleteAccountServlet extends HttpServlet {
                         + "&txtSearch="+searchValue;
                 
             }
-        }catch(SQLException ex){
-            ex.printStackTrace();
+        }catch(SQLException ex){          
+            log("DeleteAccountServlet_SQL " + ex.getMessage());
         }catch(NamingException ex){
-            ex.printStackTrace();
+            log("DeleteAccountServlet_Naming " + ex.getMessage() );
         }
         finally{
             response.sendRedirect(url);

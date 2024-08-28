@@ -8,7 +8,6 @@ package baonhq.controller;
 import baonhq.registration.RegistrationDAO;
 import baonhq.registration.RegistrationDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
@@ -60,9 +59,9 @@ public class StartUpServlet extends HttpServlet {
             }// more than 1 times
             
         }catch (SQLException ex){
-            ex.printStackTrace();
+            log("StartUpServlet_SQL " + ex.getMessage());
         }catch (NamingException ex){
-            ex.printStackTrace();
+           log("StartUpServlet_Naming " + ex.getMessage() );
         }
         finally{
             // can use sendredirect or forward

@@ -8,7 +8,6 @@ package baonhq.controller;
 import baonhq.product.ProductDAO;
 import baonhq.product.ProductDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 import javax.naming.NamingException;
@@ -50,9 +49,9 @@ public class ShowProductServlet extends HttpServlet {
                 request.setAttribute("SHOW_PRODUCT", result);
                 
         }catch(SQLException ex){
-            ex.printStackTrace();
+            log("ShowProductServlet_SQL " + ex.getMessage());
         }catch(NamingException ex){
-            ex.printStackTrace();
+            log("ShowProductServlet_Naming " + ex.getMessage());
         }
         finally{
             RequestDispatcher rd = request.getRequestDispatcher(url);

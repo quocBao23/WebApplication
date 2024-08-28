@@ -91,6 +91,7 @@ public class ProductDAO implements Serializable{
         try {
         //1.Connect DB          b11 connect
             con = DBHelper.getConnection();
+            
         //2. Create SQL String
             String sql = "select sku, name, description, quantity, price, status "
                     + "from Product "
@@ -99,6 +100,7 @@ public class ProductDAO implements Serializable{
         //3. Create Statement Obj
             stm = con.prepareStatement(sql);
             stm.setString(1, itemName);
+            
         //4. Execute querry
             rs = stm.executeQuery();
             
@@ -114,9 +116,6 @@ public class ProductDAO implements Serializable{
               boolean status = rs.getBoolean("status");
               //set data to DTO properties
                dto = new ProductDTO(sku, name, description, quantity, price, status);
-              
-              
-              
             } // 
             
         } finally {

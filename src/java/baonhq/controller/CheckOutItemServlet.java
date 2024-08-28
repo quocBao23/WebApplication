@@ -6,9 +6,17 @@
 package baonhq.controller;
 
 import baonhq.cart.CartBean;
+import baonhq.order.OrderDTO;
+import baonhq.orderDetail.OrderDetailDAO;
+import baonhq.orderDetail.OrderDetailDTO;
+import baonhq.product.ProductDAO;
+import baonhq.product.ProductDTO;
 import java.io.IOException;
-
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Map;
+import javax.naming.NamingException;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,9 +28,9 @@ import javax.servlet.http.HttpSession;
  *
  * @author Admin
  */
-@WebServlet(name = "RemoveItemServlet", urlPatterns = {"/RemoveItemServlet"})
-public class RemoveItemServlet extends HttpServlet {
-
+@WebServlet(name = "CheckOutItemServlet", urlPatterns = {"/CheckOutItemServlet"})
+public class CheckOutItemServlet extends HttpServlet {
+    private final String SHOW_RECEIPT = "receipt.jsp";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,39 +43,59 @@ public class RemoveItemServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try {
-            //1. goes to his/her cart place
+        
+        String url = SHOW_RECEIPT ;
+        Map<String, OrderDetailDTO> receipt = null;
+        
+        try  {
             HttpSession session = request.getSession(false);
             if (session != null) {
-                //2. customer take his/ her cart
                 CartBean cart = (CartBean) session.getAttribute("CART");
                 if (cart != null) {
-                    //3. customer take items
                     Map<String, Integer> items = cart.getItems();
                     if (items != null) {
-                        //4. customer choose item
-                        String [] selectedItem = request.getParameterValues("chkItem");
-                        if ( selectedItem != null){
-                            // user check at least one item
-                            // neu khong check thi select khong ton tai
-                            for (String item : selectedItem) {
-                                 //5. customer drops item
-                                cart.removeItemFromCart(item);
+                        
+                        OrderDTO orderDTO = (OrderDTO)request.getAttribute("ORDER");
+                        // insert into tbl.OrderDetail
+                        for (String key : items.keySet()) {
+                            // get information
+                            ProductDAO productDAO = new ProductDAO();
+                            ProductDTO productDTO = null;
+                            productDTO = productDAO.getProduct(key); 
+                            
+                            //New DAO obj
+                            OrderDetailDAO dao = new OrderDetailDAO();
+                            int id = dao.checkOrderDetailRow();
+                            int productID = productDTO.getSku();
+                            float unitPrice = productDTO.getPrice();
+                            int quantity = items.get(key);
+                            String orderID = orderDTO.getOrderID();
+                            float totalProductPayment = unitPrice * quantity;
+                            
+                            OrderDetailDTO dto = new OrderDetailDTO(id, productID, unitPrice, quantity, orderID, unitPrice); 
+                            // Call method , insert to DB
+                            boolean result = dao.insertOrderDetail(dto); 
+                            if ( receipt == null ){
+                                receipt = new HashMap<>();
                             }
-                            session.setAttribute("CART", cart);
+                            if (result){
+                                receipt.put(key, dto);
+                            }
+                            
+                                                                             
                         }
-                       
+                        request.setAttribute("ORDER_DETAIL", receipt);   
+                        session.removeAttribute("CART");
                     }
-
                 }
-
             }
-
-        } finally {
-            // refresh by call previous using urlRewrting
-            String urlRewriting = "DispatchServlet"
-                    + "?btAction=View Cart";
-            response.sendRedirect(urlRewriting);
+        } catch (SQLException ex) {            
+            log("CheckOutItemServlet_SQL " + ex.getMessage());
+        } catch (NamingException ex) {
+            log("CheckOutItemServlet_Naming " + ex.getMessage() );
+        }finally{
+            RequestDispatcher rd = request.getRequestDispatcher(url);
+            rd.forward(request, response);
         }
     }
 

@@ -5,16 +5,12 @@
  */
 package baonhq.controller;
 
+import baonhq.registration.RegistrationCreateError;
 import baonhq.registration.RegistrationDAO;
 import baonhq.registration.RegistrationDTO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.naming.NamingException;
-import javax.servlet.Registration;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,10 +22,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Admin
  */
-@WebServlet(name = "SearchServlet", urlPatterns = {"/SearchLastNameServlet"})
-public class SearchLastNameServlet extends HttpServlet {
-     private final String SEARCH_PAGE = "search.html";
-     private final String RESULT_PAGE = "search.jsp";
+@WebServlet(name = "CreateAccountServlet", urlPatterns = {"/CreateAccountServlet"})
+public class CreateAccountServlet extends HttpServlet {
+
+    private final String ERROR_PAGE = "createAccount.jsp";
+    private final String LOGIN_PAGE = "login.html";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -43,32 +40,60 @@ public class SearchLastNameServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
+        //1. get all information
+        String username = request.getParameter("txtUsername");
+        String password = request.getParameter("txtPassword");
+        String confirm = request.getParameter("txtConfirm");
+        String fullName = request.getParameter("txtFullname");
+        boolean foundErr = false;
         
-        String url = SEARCH_PAGE;
-        //1. get all information from user
-        String searchValue = request.getParameter("txtSearch");
+        RegistrationCreateError errors = new RegistrationCreateError();
+        String url = ERROR_PAGE;
         try {
-            if (!searchValue.trim().isEmpty()){
-            
-            //2. call method from DAO
-            //2.1 New DAO
+            //2.check all user error
+            if (username.trim().length() < 5 || username.trim().length() > 30) {
+                foundErr = true;
+                errors.setUserNameLength("username is required from 5 to 30");
+            }
+            if (password.trim().length() < 6 || password.trim().length() > 30) {
+                foundErr = true;
+                errors.setUserPasswordLength("password is required from 6 to 30");
+            } else if (!confirm.trim().equals(password.trim())) {
+                foundErr = true;
+                errors.setConfirmNotMatched("Not Matched");
+            }
+            if (fullName.trim().length() < 2 || fullName.trim().length() > 50) {
+                foundErr = true;
+                errors.setUserFullNameLength("FullName is required from 2 to 50");
+            }
+            if (foundErr) {
+                // catching Error vao 1 attribute
+                request.setAttribute("FOUND_ERROR", errors);
+            } else {
+                //3. call method
                 RegistrationDAO dao = new RegistrationDAO();
-            //2.2 Call Method
-               dao.searchLastName(searchValue);
-            //3. process 
-                List<RegistrationDTO> result = dao.getAccounts();
-                request.setAttribute("SEARCH_RESULT", result);
-                url = RESULT_PAGE;
-            }//user input valid value
+                RegistrationDTO dto = new RegistrationDTO(username, password, fullName, false);
+                boolean result = dao.createAccount(dto);
+                if (result){
+                    //4.process
+                    url = LOGIN_PAGE;
+                }
+                
+            }
+
         } catch (SQLException ex) {
-             log("SearchLastNameServlet_SQL " + ex.getMessage());
-         } catch (NamingException ex) {
-             log("SearchLastNameServlet_Naming " + ex.getMessage());
-         }finally{
+            String msg = ex.getMessage();
+            log("AddAccountServlet_SQL " + ex.getMessage());
+            if ( msg.contains("duplicate")){
+                errors.setUserNameIsExisted(username + "is exited");
+                request.setAttribute("FOUND_ERROR", errors);
+            }
+        } catch (NamingException ex) {
+            log("AddAccountServlet_Naming " + ex.getMessage() );
+        } finally {
             RequestDispatcher rd = request.getRequestDispatcher(url);
             rd.forward(request, response);
-            
+
         }
     }
 

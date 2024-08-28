@@ -65,22 +65,13 @@ public class OrderDetailDAO implements Serializable{
          return count;  
     }
     
-    public boolean insertOrderDetail(int productID, float unitPrice, int quantity, String orderID, float total) throws SQLException, NamingException{
+    public boolean insertOrderDetail(OrderDetailDTO dto) throws SQLException, NamingException{
         
         Connection con = null;
         PreparedStatement stm = null;
         boolean result = false;
         int count = 0;
-        
-//        if (count >0 && count < 10 ){
-//            orderID = "ODOO".concat(String.valueOf(count +1));
-//        }else if (count >= 10 && count < 100 ){
-//            orderID = "ODO".concat(String.valueOf(count +1));
-//        }else {
-//            orderID = "OD".concat(String.valueOf(count +1));
-//        }
-        Date date = new Date(System.currentTimeMillis());
-        
+         
         try {
         //1.Connect DB          b11 connect
             con = DBHelper.getConnection();
@@ -90,12 +81,18 @@ public class OrderDetailDAO implements Serializable{
                     
         //3. Create Statement Obj
             stm = con.prepareStatement(sql);
-            stm.setInt(1, this.count + 1 );
-            stm.setInt(2, productID);
-            stm.setFloat(3, unitPrice);
-            stm.setInt(4, quantity);
-            stm.setString(5, orderID);
-            stm.setFloat(6, total);
+            stm.setInt(1, dto.getId() );
+            stm.setInt(2, dto.getProductID());
+            stm.setFloat(3, dto.getUnitPrice());
+            stm.setInt(4, dto.getQuantity());
+            stm.setString(5, dto.getOrderID());
+            stm.setFloat(6, dto.getTotal());
+//            stm.setInt(1, this.count + 1 );
+//            stm.setInt(2, productID);
+//            stm.setFloat(3, unitPrice);
+//            stm.setInt(4, quantity);
+//            stm.setString(5, orderID);
+//            stm.setFloat(6, total);
         //4. Execute querry
             int i = stm.executeUpdate();
         //5. Process result     b13 mapped
